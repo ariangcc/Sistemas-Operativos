@@ -1,0 +1,2 @@
+systemd---systemd---gnome-terminal----bash---fanprocesses-+-3*[fanprocesses]
+                                                          `-sh---pstree

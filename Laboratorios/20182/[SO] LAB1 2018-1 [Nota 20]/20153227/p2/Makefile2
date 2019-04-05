@@ -1,0 +1,10 @@
+CC=gcc
+CFLAGS=-c
+DEPS=fraccion.h
+OBJ=suma.o resta.o producto.o division.o
+
+main: %.c $(DEPS) $(OBJ)
+	$(CC) -c $@ $<
+
+%.o: %.c $(DEPS)
+	$(CC) -c -o $@ $< 

@@ -1,0 +1,1 @@
+systemd---systemd---gnome-terminal----bash---mypid---mypid---sh---pstree

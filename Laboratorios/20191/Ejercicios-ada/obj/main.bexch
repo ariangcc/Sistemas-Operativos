@@ -1,0 +1,19 @@
+[GENERATED OBJECT FILE]
+b__main.o
+[PROJECT FILES]
+/home/alulab/Documentos/20160236/Labs/Ejercicios-ada/esprimo.gpr
+20190329175220
+[BOUND OBJECT FILES]
+/home/alulab/Documentos/20160236/Labs/Ejercicios-ada/obj/main.o
+[GENERATED SOURCE FILES]
+b__main.ads
+b__main.adb
+b__main.ali
+[RESULTING OPTIONS]
+-L/home/alulab/Documentos/20160236/Labs/Ejercicios-ada/obj/
+-L/home/alulab/Documentos/20160236/Labs/Ejercicios-ada/obj/
+-L/opt/GNAT/2018/lib/gcc/x86_64-pc-linux-gnu/7.3.1/adalib/
+-static
+-static-libgcc
+/opt/GNAT/2018/lib/gcc/x86_64-pc-linux-gnu/7.3.1/adalib/libgnat.a
+-ldl
