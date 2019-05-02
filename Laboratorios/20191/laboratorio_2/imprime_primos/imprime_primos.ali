@@ -1,0 +1,58 @@
+V "GNAT Lib v8"
+M P W=b
+P ZX
+
+RN
+RV NO_DIRECT_BOOLEAN_OPERATORS
+RV NO_IO
+RV SPARK_05
+
+U imprime_primos%b	imprime_primos.adb	e3145837 NE OO SU IL
+W ada%s			ada.ads			ada.ali
+W ada.integer_text_io%s	a-inteio.ads		a-inteio.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+
+D ada.ads		20170911084841 76789da1 ada%s
+D a-except.ads		20180111085525 291912d5 ada.exceptions%s
+D a-inteio.ads		20170908151217 f64b89a4 ada.integer_text_io%s
+D a-ioexce.ads		20170908151217 e4a01f64 ada.io_exceptions%s
+D a-stream.ads		20180111085525 119b8fb3 ada.streams%s
+D a-tags.ads		20180111085525 491b781d ada.tags%s
+D a-textio.ads		20180111085525 881db35a ada.text_io%s
+D a-tiinio.ads		20180111085525 aa04e5d6 ada.text_io.integer_io%s
+D a-unccon.ads		20170908151217 0e9b276f ada.unchecked_conversion%s
+D imprime_primos.adb	20190422193701 9d4262c9 imprime_primos%b
+D interfac.ads		20180111085525 5ab55268 interfaces%s
+D i-cstrea.ads		20180111085525 e53d8b8e interfaces.c_streams%s
+D system.ads		20180111085525 4635ec04 system%s
+D s-crtl.ads		20180111085525 0ebbdb71 system.crtl%s
+D s-exctab.ads		20180111085525 54135002 system.exception_table%s
+D s-ficobl.ads		20180111085525 078245e4 system.file_control_block%s
+D s-parame.ads		20180111085525 f896c45c system.parameters%s
+D s-secsta.ads		20180111085525 283dec34 system.secondary_stack%s
+D s-soflin.ads		20180111085525 a7318a92 system.soft_links%s
+D s-stache.ads		20180111085525 a37c21ec system.stack_checking%s
+D s-stalib.ads		20180111085525 09bd3940 system.standard_library%s
+D s-stoele.ads		20180111085525 2dc34a04 system.storage_elements%s
+D s-traent.ads		20180111085525 005bf670 system.traceback_entries%s
+D s-unstyp.ads		20180111085525 34867c83 system.unsigned_types%s
+D s-wchcon.ads		20180111085525 1b7d22d2 system.wch_con%s
+X 1 ada.ads
+16K9*Ada 20e8 10|1r6 1r19 2r6 2r19
+X 3 a-inteio.ads
+18K13*Integer_Text_IO[8|46] 10|1w23 2r23
+X 7 a-textio.ads
+49K13*Text_IO 471e16 10|1w10 2r10
+242U14*Put 10|21s5
+X 8 a-tiinio.ads
+56U14*Get 10|22s5[3|18]
+66U14*Put 10|25s29[3|18]
+X 10 imprime_primos.adb
+4U11*imprime_primos 4b11 29l5 29t19
+5i5 num{integer} 22m9 24r31
+7V14 es_primo{boolean} 7b14 7>23 18l9 18t17 25s12
+7i23 N{integer} 11r24 12r16
+8b9 R{boolean} 11r31 13m17 17r16
+9i9 I{integer} 11r15 11r19 12r22 15m13 15r18
+24i9 I{integer} 25r21 25r33
+

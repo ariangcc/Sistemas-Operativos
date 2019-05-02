@@ -73,7 +73,6 @@ apuntada por status.
 
 
 *************************************************************
-
 qué es el descriptor de archivo? 
 es el numero entero que identifica de forma unica un archivo abierto del proceso
 
@@ -94,6 +93,7 @@ Escribir a stdout => escribir a fd 1 : cada vez que veamos una salida a la panta
 
 Escriba a stderr => escriba a fd 2 : Nosotros vea cualquier error en la pantalla de video, también es de ese archivo, escriba a stderr en pantalla a través de fd 2.
 *************************************************************
+
 - pipe(int fds[2]):
 es una conexión entre dos procesos de modo que la salida estándar de un proceso se convierte en la entrada estándar del otro, estas sirven para la comunicación entre procesos, esta comunicacion es unidireccional.
 
@@ -106,7 +106,8 @@ el tamaño de lectura y escritura no tiene que coincidir aquí. Podemos escribir
 
 una ventaja del pipe es que una vez llamado, los descriptores seguiran abiertos en todos los procesos secundarios y tambien en el principal.
 
-BELLO DICE: 
+BELLO DICE:
+ 
 un pipe puede estar vacio, si algun proceso intenta leer de aqui se bloquea hasta que haya algo en el pipe, tambien se bloquea cuando el pipe esta lleno.
 
 cuando se hace open en un archivo, recibo un descriptor de archivo este descriptor me sirve tanto para leer como para grabar en el archivo.
@@ -121,76 +122,14 @@ al iniciarse un programa los descriptores de archivo son por defecto 0 1 2 luego
 PARA EVITAR ALGUN TIPO DE INTERBLOQUEO Y PORQUE SE SABE QUE EL FLUJO DEL PIPE ES UNIDIRECCIONAL SE TIENE QUE ESPECIFICAR QUE POR CADA PIPE HAY UN SOLO PROCESO DE LECTURA Y UN SOLO PROCESO QUE ESCRIBE
 
 
-
 - dup(oldfd):
 crea  una copia del descriptor de archivo oldfd y usa el menor espacio disponible o sea el primer espacio que encuentra para colocar ahi la copia
 
 - dup2(oldfd, newfd):
 ya no lo crea en cualquier parte, lo crea en el nuevo file descriptor
 
-- read(int fd, void* buf, size cnt):
-Desde el archivo indicado por el descriptor de archivo fd, la función read () lee bytes de entrada cnt en el área de memoria indicada por buf
-
-- write():
-escribe cnt bytes desde buf al archivo o socket asociado con fd. cnt no debe ser mayor que INT_MAX
 
 
-- close(): 
-cierra algun archivo abierto 
-
--open(path, flags): 
-para abrir archivos , el flag fdefine para que se abre
-devolvera el el file descriptor disponible el cual se usará para el archivo en cuestión 
-
-
-/////////////////////////////////
-que sucede con un poroceso escritor cuando intenta escribir en un pipe lleno, puede suceder que no hay un lector que vaya vaciando el pipe por el extremo de lectura, cuando el pipe se llena y se intenta escribir más ahi, el proceso de escritura se bloquea esperando indefiidamente espacio disponible para escribir esto solo ocurre si existe un proceso de lectura o sea un descriptor de lectura, 
-
-que sucede cuando intenta leer de un pipe vacio, se bloquea solo si hay por lo menos un proceso escritor
-
-si no hay un proceso lector  , el proceso escritor correspondiente se termina 
-
-un proceso lector no se bloquea en la lectura si no hay escritores, sigue con la ejecucion de su codigo
-////////////////////////////////
-
-creando dos pipes uno que vaya de padre a hijo y otro de hijo a padre
-
-el hijo hereda la tabla de descriptores de archivo pero puede modificarla a su gusto 
-el hijo hereda las modificadciondes que el padre hizo sobre su propia tabla 
-
-int fd[2];
-pid_t haschild;
-
-pipe(fd); /* pipe a */
-dup2(fd[0], STDIN_FILENO);
-dup2(fd[1], STDOUT_FILENO);
-
-close(fd[0]);
-close(fd[1]);
-
-pipe(fd); /* pipe b */
-haschild = fork();
-
-if (haschild > 0)
- dup2(fd[1], STDOUT_FILENO); /* parent(A) redirects std output */
-else if (!haschild)
- dup2(fd[0], STDIN_FILENO); /* child(B) redirects std input */
-
-close(fd[0]);
-close(fd[1]);
-
-/////////////////
-
-//verificar si es una llamada al sistema 
--exit()
-FUNCIONES EXEC
-
-
--execl()
--execv()
--execle()
--execlp()
--execvp()
 
 
 

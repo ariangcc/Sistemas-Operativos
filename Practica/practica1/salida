@@ -1,0 +1,16 @@
+total 100
+-rwxr-xr-x 1 lucas lucas 8616 abr 11 16:34 2017-1_pr1
+-rw-r--r-- 1 lucas lucas  523 abr 11 16:33 2017-1_pr1.c
+-rwxrwxr-x 1 lucas lucas 8616 abr  9 18:14 bloqueo
+-rw-rw-r-- 1 lucas lucas 2002 abr  9 18:14 bloqueo.c
+-rwxrwxr-x 1 lucas lucas 8512 abr  9 17:25 exec
+-rw-rw-r-- 1 lucas lucas  489 abr 11 14:33 exec.c
+-rwxrwxr-x 1 lucas lucas 8480 abr  9 19:05 pipeint
+-rw-rw-r-- 1 lucas lucas  275 abr  9 19:06 pipeint.c
+-rwxr-xr-x 1 lucas lucas 8520 abr 11 19:36 pregunta4a
+-rw-r--r-- 1 lucas lucas  445 abr 11 19:36 pregunta4a.c
+-rw-r--r-- 1 lucas lucas    0 abr  9 22:09 README.txt
+-rwxr-x--- 1 lucas lucas  750 abr 11 19:34 salida
+-rwxrwxr-x 1 lucas lucas 8344 abr  9 19:12 wait
+-rw-rw-r-- 1 lucas lucas  172 abr  9 19:12 wait.c
+9:12 wait.c
