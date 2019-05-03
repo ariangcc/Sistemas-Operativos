@@ -1,0 +1,90 @@
+V "GNAT Lib v8"
+M P W=b
+P ZX
+
+RN
+RV NO_EXCEPTION_HANDLERS
+RV NO_EXCEPTIONS
+RV NO_IO
+RV NO_SELECT_STATEMENTS
+RV NO_STANDARD_STORAGE_POOLS
+RV NO_TASK_HIERARCHY
+RV NO_TASKING
+RV NO_TERMINATE_ALTERNATIVES
+RV NO_DEFAULT_INITIALIZATION
+RV SPARK_05
+RV MAX_SELECT_ALTERNATIVES=2
+RV MAX_TASK_ENTRIES=1
+RV MAX_TASKS=1+
+
+U barbersleep%b		barberSleep.adb		9d8ecfa5 NE OO SU
+W ada%s			ada.ads			ada.ali
+Z ada.real_time%s	a-reatim.adb		a-reatim.ali
+Z ada.tags%s		a-tags.adb		a-tags.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+Z system%s		system.ads		system.ali
+Z system.parameters%s	s-parame.adb		s-parame.ali
+Z system.soft_links%s	s-soflin.adb		s-soflin.ali
+Z system.task_info%s	s-tasinf.adb		s-tasinf.ali
+Z system.tasking%s	s-taskin.adb		s-taskin.ali
+Z system.tasking.rendezvous%s  s-tasren.adb	s-tasren.ali
+Z system.tasking.stages%s  s-tassta.adb		s-tassta.ali
+
+D ada.ads		20170911084841 76789da1 ada%s
+D a-except.ads		20180111085525 291912d5 ada.exceptions%s
+D a-finali.ads		20180111085525 bf4f806b ada.finalization%s
+D a-ioexce.ads		20170908151217 e4a01f64 ada.io_exceptions%s
+D a-reatim.ads		20180111085525 a87e2da7 ada.real_time%s
+D a-stream.ads		20180111085525 119b8fb3 ada.streams%s
+D a-tags.ads		20180111085525 491b781d ada.tags%s
+D a-textio.ads		20180111085525 881db35a ada.text_io%s
+D a-unccon.ads		20170908151217 0e9b276f ada.unchecked_conversion%s
+D barberSleep.adb	20190503141456 15937cff barbersleep%b
+D interfac.ads		20180111085525 5ab55268 interfaces%s
+D i-c.ads		20170908151217 5421119b interfaces.c%s
+D i-cstrea.ads		20180111085525 e53d8b8e interfaces.c_streams%s
+D system.ads		20180111085525 4635ec04 system%s
+D s-atacco.ads		20180111085525 4c36d12f system.address_to_access_conversions%s
+D s-crtl.ads		20180111085525 0ebbdb71 system.crtl%s
+D s-exctab.ads		20180111085525 54135002 system.exception_table%s
+D s-ficobl.ads		20180111085525 078245e4 system.file_control_block%s
+D s-finroo.ads		20180111085525 4ff27390 system.finalization_root%s
+D s-linux.ads		20180111085525 2fda6ad1 system.linux%s
+D s-multip.ads		20170908151217 38ac9f73 system.multiprocessors%s
+D s-oscons.ads		20180728061341 2a880dab system.os_constants%s
+D s-osinte.ads		20180111085525 c6986a0c system.os_interface%s
+D s-parame.ads		20180111085525 f896c45c system.parameters%s
+D s-secsta.ads		20180111085525 283dec34 system.secondary_stack%s
+D s-soflin.ads		20180111085525 a7318a92 system.soft_links%s
+D s-stache.ads		20180111085525 a37c21ec system.stack_checking%s
+D s-stausa.ads		20180111085525 017a0a05 system.stack_usage%s
+D s-stalib.ads		20180111085525 09bd3940 system.standard_library%s
+D s-stoele.ads		20180111085525 2dc34a04 system.storage_elements%s
+D s-tasinf.ads		20180111085525 2b3f8252 system.task_info%s
+D s-taspri.ads		20180111085525 f40ac08d system.task_primitives%s
+D s-taprop.ads		20180111085525 1dd2e1b6 system.task_primitives.operations%s
+D s-taskin.ads		20180111085525 1d8c1ccb system.tasking%s
+D s-taprob.ads		20180111085525 acd6094d system.tasking.protected_objects%s
+D s-tpoben.ads		20180111085525 60ad3dae system.tasking.protected_objects.entries%s
+D s-tasren.ads		20180111085525 a67a9949 system.tasking.rendezvous%s
+D s-tassta.ads		20180111085525 cca55c94 system.tasking.stages%s
+D s-traent.ads		20180111085525 005bf670 system.traceback_entries%s
+D s-unstyp.ads		20180111085525 34867c83 system.unsigned_types%s
+D s-wchcon.ads		20180111085525 1b7d22d2 system.wch_con%s
+X 1 ada.ads
+16K9*Ada 20e8 10|1r6 1r23
+X 8 a-textio.ads
+49K13*Text_IO 471e16 10|1w10 1r27
+263U14*Put_Line 10|22s17
+X 10 barberSleep.adb
+3U11*barberSleep 3b11 49l5 49t16
+6i5 nWaiting{integer} 23m17 23r29 32r18 36m17 36r29
+8t10 barber 17b15 26l9 26t15 34r21
+9Y15 cutHair 21b20 24l17 24t24 34s28
+12t10 customer 20r13 28b15 41l9 41t17
+13Y15 getHairCut 20s22 33b24 35l21 35t31
+19i13 i{integer}
+X 28 s-stausa.ads
+203U14*Initialize 204i<c,__gnat_stack_usage_initialize>22
+268U14*Output_Results 272i<c,__gnat_stack_usage_output_results>22
+
