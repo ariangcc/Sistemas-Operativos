@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "stdlib.h": "c",
+        "xalloc.h": "c",
+        "unistd.h": "c"
+    }
+}
