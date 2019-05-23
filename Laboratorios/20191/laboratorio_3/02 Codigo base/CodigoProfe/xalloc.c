@@ -14,31 +14,18 @@
 #include "xalloc.h"
 
 /*
- * El espacio libre de almacenamiento es mantenido como una 
- * lista de bloques libres, Cada bloque contiene un tamaño ,
- * un apuntador al siguiente bloque, y el espacio en sí, Los
- * bloques son mantenidos en orden ascendente de dirección de 
- * almacenamiento (ordenados por sus diercciones) el ultimo bloque
- * apunta al primero. 
-*/
-
-/* (esto aun no lo entiendo bien)
-
  * Definicion de la cabecera para huecos y bloques. 
  * La union con un campo de tipo Align fuerza que el tama~no
  * de la cabecera sea multiplo del tama~no de este tipo.
- * 
- * El campo Align nunca es utilizado, solo hace que cada 
- * header esté alineado al limite del peor caso
  */
-typedef long Align;    /* para alineamiento al limite mayor */
+typedef long Align;    /* for alignment to long boundary */
 
 union header {   /* block header: */
 	struct {
-		union header *ptr;  /* siguiente bloque si está en la lista libre */
-		size_t size;     /* tamaño de este bloque */
+		union header *ptr;  /* next block if on free list */
+		size_t size;     /* size of this block */
 	} s;
-	Align x;             /* obliga a la alineacion de bloques */
+	Align x;             /* force alignment of blocks */
 };
 
 typedef union header Header;
@@ -55,8 +42,7 @@ static Header base;   /* empty list to get started */
  * por el que comenzara la busqueda.
  * Necesario para implementar la estrategia next-fit
  */
-
-static Header *freep = NULL;  /* start of the free list */
+static Header  *freep = NULL;  /* start of the free list */
 
 
 #define NALLOC 1024
@@ -77,20 +63,16 @@ static Header *morecore(size_t nu)
 
 	if (nu < NALLOC)	
 		nu = NALLOC;
-
-	/*sbrk(n) regresa un apuntador a n bytes mas de almacenamiento, regresa -1 si no hubo espacio*/
-	cp = sbrk(nu * sizeof(Header)); 
+	cp= sbrk(nu * sizeof(Header));
 	if (cp == (char *) -1) /* no space at all */
 		return NULL;
-	
 	up = (Header *) cp;
 	up ->s.size = nu;
-
-	xfree((void *)(up+1)); /*inserta la memoria adicional en up + 1*/
+	xfree((void *)(up+1));
 	return freep;
 }
 
-/* xmalloc: asignador de almacenamiento de proposito general */
+/* xmalloc: general-purpose storage allocator */
 void *xmalloc (size_t nbytes)
 {
 	Header  *p, *prevp;
@@ -121,8 +103,7 @@ void *xmalloc (size_t nbytes)
 		if (p->s.size >= nunits) {  /* big enough */
 			if (p->s.size == nunits)  /* exactly */
 				prevp->s.ptr = p->s.ptr;
-
-			else {  /* asigna la parte final */
+			else {  /* allocate tail end */
 				p->s.size -= nunits;
 				p+= p->s.size;
 				p->s.size = nunits;
@@ -145,7 +126,7 @@ void xfree(void *ap)
 {
 	Header *bp, *p;
 
-	bp = (Header *)ap - 1;  /* apunta al header de un bloque */
+	bp = (Header *)ap - 1;  /* point to block header */
 
 	/*
 	   Bucle que recorre la lista de huecos para buscar el hueco
@@ -162,20 +143,20 @@ void xfree(void *ap)
 		del for)
 	*/
 
-	for (p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr)
+	for (p= freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr)
 		if (p >= p->s.ptr && (bp > p || bp < p->s.ptr))
-			break;  /*libera el bloque al inicio o al final*/ 
+			break;  /* freed block at start or end of arena */ 
 
 
 	/* Comprueba compactacion con hueco posterior */
-	if (bp + bp->s.size == p->s.ptr) {  /* une al nbr superior */
+	if (bp + bp->s.size == p->s.ptr) {  /* join to upper nbr */
 		bp->s.size += p->s.ptr->s.size;
 		bp->s.ptr = p->s.ptr->s.ptr;
 	} else
 		 bp->s.ptr = p->s.ptr;
 
 	/* Comprueba compactacion con hueco anterior */
-	if (p + p->s.size == bp) {         /* une al nbr inferior*/
+	if (p + p->s.size == bp) {         /* join to lower nbr */
 		p->s.size += bp->s.size;
 		p->s.ptr = bp->s.ptr;
 	} else

@@ -3,7 +3,6 @@
 #include <stdlib.h>
 
 #include <unistd.h>
-#include "xalloc.h"
 
 /*
  * El espacio libre de almacenamiento es mantenido como una 
@@ -50,7 +49,11 @@ static Header base;   /* empty list to get started */
 
 static Header *freep = NULL;  /* start of the free list */
 
+
 #define NALLOC 10 /* minima memoria que se puede solicitar al so*/
+
+int eqHeader = (sizeof(Header) + sizeof(Align) - 1)/sizeof(Align); //cuantos Aligs equivale un header
+int eqAling =  (sizeof(Align) + sizeof(Header) - 1)/sizeof(Header);//cuantos header equivale un Aling
 
 
 static Header* morecore(size_t nu);
@@ -73,21 +76,24 @@ int main(void){
 
     ptlong1 = (unsigned int *)xmalloc(long_size);
     visualize("solicitar long");
-    ptstring1 = (char*) xmalloc(20*char_size);
-    visualize("solicitar 20 char");
+    ptstring1 = (char*) xmalloc(25*char_size);
+    visualize("solicitar 25 char");
     ptstring2 = (char*) xmalloc(25*char_size);
     visualize("solicitar 25 char");
     ptstring3 = (char*) xmalloc(16*char_size);
     visualize("solicitar 16 char");
     
-    xfree(ptstring2);
-    visualize("xfree(pstring2)");
+    //xfree(ptstring2);
+    //visualize("xfree(pstring2) de 25bytes");
     
-    //xfree(ptstring1);
-    //visualize("xfree(pstring1)");
+    xfree(ptstring1);
+    visualize("xfree(pstring1) de 25bytes");
     
-    xfree(ptlong1);
-    visualize("xfree(ptlong1)"); 
+    //xfree(ptlong1);
+    //visualize("xfree(ptlong1) de 8 bytes"); 
+
+    xfree(ptstring3); 
+    visualize("cfree(pstring3) de 16 bytes");
     exit(0);     
 }
 
@@ -104,13 +110,18 @@ void *xmalloc (size_t nbytes)
        nunits: el numero exacto de unides necesarias para brindar 
        nbytes de almacenamiento 
 	   El termino "+ 1" es para incluir la propia cabecera.
+
 	*/
-	nunits = (nbytes+sizeof(Header)-1)/sizeof(Header) + 1;
-    
-    printf("-necesito %ld bytes que equivalen a %ld units-",nbytes,nunits);
-	/* En la primera llamada se construye una lista de huecos con un
+	
+    //nunits = (nbytes+sizeof(Header)-1)/sizeof(Header) + 1;
+    nunits = (nbytes + sizeof(Align) - 1)/sizeof(Align) + eqHeader; // <----ACTIVIDAD 1
+
+    printf("-necesito %ld bytes que equivalen a %ld Aligns: 2 [header] + %ld [nbytes]-\n",nbytes,nunits,nunits-2);
+	
+    /* En la primera llamada se construye una lista de huecos con un
 	   unico elemento de tama~no cero (base) que se apunta a si mismo */
-	if (( prevp = freep) == NULL ) { /* no free list yet */
+	
+    if (( prevp = freep) == NULL ) { /* no free list yet */
         // Create degenerate free list; base points to itself and has size 0
         base.s.next = &base;
         base.s.size = 0;
@@ -125,27 +136,32 @@ void *xmalloc (size_t nbytes)
 	   que apunta freep, hasta que encuentra uno que satisface la peticion
 	   o da toda una vuelta a la lista (no hay espacio suficiente)
 	*/
+
     prevp = freep; //solo para visualizar en realidad siempre se hace en el if
     currp = prevp->s.next;
 
 	for (; ; prevp = currp, currp = currp->s.next) {
+        //actividad 2: deben sobrar al menos dos units,  size >= 2 +  nunits
 		if (currp->s.size >= nunits) {  /* big enough */
-			if (currp->s.size == nunits)  /* exactly */
-				prevp->s.next = currp->s.next;
-
-			else {  
+			//if (currp->s.size == nunits || currp->s.size - nunits < 2)
+			if (currp->s.size == nunits || currp->s.size - nunits < 1 + eqHeader)  // <--- ACTIVIDAD 2 
+            	//lo hice tomando en cuenta que un header es eqHeader Aligns
+                prevp->s.next = currp->s.next;
+			else {                  
                 /* adjust the size */
-				currp->s.size -= nunits;
+                currp->s.size -= nunits;
                 /* find the address to return */                                 
-				currp += currp->s.size;
-				currp->s.size = nunits;
+                currp += currp->s.size;
+                currp->s.size = nunits;
 			}
+
 			freep = prevp; /* se comienza cada vez la búsqueda 
                               desde donde termino la última
                               estrategia next-fit */
-			return (void *)(currp + 1); /* devuelve un puntero a la
-						 zona de datos del bloque */
+
+			return (void *)(currp + 1); /* devuelve un puntero a la zona de datos del bloque */
 		}
+
 		/* Si ha dado toda la vuelta pide mas memoria y vuelve
 		   a empezar */
 		if (currp == freep) 
@@ -187,23 +203,27 @@ static Header *morecore(size_t nunits)
         * break - so if the break was increased, then this value is a pointer to the
         * start of the newly allocated memory.
     */
+
     freemem = sbrk(nunits * sizeof(Header)); 
 	if (freemem == (char *) -1) /* no space at all */
 		return NULL;
     
-    printf("*llamada a morecore* El nuevo bloque tendrá %ld units \n",nunits);
+    printf("**llamada a morecore** El nuevo bloque tendrá %ld units \n",nunits);
     totalUnits += nunits;
 
     //se contruye un nuevo bloque
-	insertp = (Header *) freemem;
-	insertp->s.size = nunits;
-
-    /* Insert block into the free list so that it is available for malloc.  Note
+    insertp = (Header *) freemem; 
+    insertp->s.size = nunits;
+    
+    /* 
+    * Insert block into the free list so that it is available for malloc.  Note
     * that we add 1 to the address, effectively moving to the first position
     * after the header data, since of course we want the block header to be
     * transparent for the user's interactions with malloc and free.
     */
+
 	xfree((void *)(insertp+1));
+
     /* Returns the start of the free list; recall that freep has been set to the
     * block immediately preceeding the newly allocated memory (by free).  Thus by
     * returning this value the calling function can immediately find the new
@@ -215,11 +235,11 @@ static Header *morecore(size_t nunits)
 /* xfree: put block apuntado por ptr in the free list */
 void xfree(void *ptr)
 {
+    //aca seria lo mismo, son punteros a headers  
 	Header *insertp, *currp;
-
 	insertp = ((Header *)ptr) - 1;  /* apunta al header de un bloque */
-
-	/*
+	
+    /*
 	   Bucle que recorre la lista de huecos para buscar el hueco
 	   anterior al bloque que se va a liberar.
 	   Del bucle se sale cuando se encuentran los dos huecos
@@ -237,7 +257,9 @@ void xfree(void *ptr)
 	for (currp = freep; 
         !(insertp > currp && insertp < currp->s.next);
          currp = currp->s.next)
-        /* currp >= currp->s.ptr implies that the current block is the rightmost
+
+        /* 
+        * currp >= currp->s.ptr implies that the current block is the rightmost
         * block in the free list.  Then if the insertion block is to the right of
         * that block, then it is the new rightmost block; conversely if it is to
         * the left of the block that currp points to (which is the current leftmost
@@ -272,9 +294,43 @@ void xfree(void *ptr)
 	freep = currp; /* estrategia next-fit */
 }
 
-void *xrealloc(void * next, size_t size)
+
+void * disminuirBloque(void * ptr, size_t size){
+    Header* bp = (Header*) ptr - 1;
+    Header* prevp = bp ;
+    Header* newb;
+    //int nunits = (size + sizeof(Header)-1)/sizeof(Header) + 1;
+    int nunits = (size + sizeof(Align) - 1)/sizeof(Align) + eqHeader; // <----ACTIVIDAD 1
+
+    //se debe encontrar la nueva posicion de freep
+    while(prevp->s.next != bp)
+        prevp = prevp->s.next;
+    
+    freep = prevp; 
+    //ahora que se tiene la posicion correcta del freep, se libera el bloque
+    newb = bp+(bp->s.size-nunits);
+    newb->s.size = nunits;  
+    xfree(newb + 1);
+    return freep->s.next; //return newb
+}
+
+/* aca estoy considerando para cuando las unidades se miden en alings*/
+void *xrealloc(void * ptr, size_t size)
 {
-	return NULL;
+    Header* bp = (Header*) ptr - 1; //pt al bloque que voy a modificar 
+    Header* rp; //pt al bloque que voy a devolver
+
+    //if(sizeof(Header) * (bp->s.size - 1) > size)
+    if(sizeof(Align) * (bp->s.size - eqHeader) > size){
+        //se verifica que haya adyacentes libres o que cumpla requisitos de tamaño
+        //if((bp->s.next == (bp + bp->s.size)) || (bp->s.size - size >= 2))
+        if((bp->s.next == (bp + bp->s.size)) || (bp->s.size - size >= 1 + eqHeader)){
+            rp = (Header*)disminuirBloque(ptr,size);
+        }else{
+            return NULL; //no fue posible reallocar
+        }
+    }
+    return rp + 1;
 }
 
 

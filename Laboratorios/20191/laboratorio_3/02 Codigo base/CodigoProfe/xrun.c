@@ -3,8 +3,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "xalloc.h"
-
 void *xmalloc (size_t nbytes);
 
 int main(void)
@@ -15,8 +13,7 @@ int main(void)
   x=0;
 
   do {
-    //base=pow(2,x)+.5;
-    base = x;
+    base=pow(2,x)+.5;
     if((pt=(unsigned int *)xmalloc(base*unidad))) 
        fprintf(stdout,"Se solicitaron %d bytes y estan ubicados en %p\n",base*unidad,pt);
     else
@@ -26,4 +23,5 @@ int main(void)
   exit(0);                  
   
 }
+
 
