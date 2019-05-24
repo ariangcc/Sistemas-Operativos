@@ -2,6 +2,7 @@
     "files.associations": {
         "stdlib.h": "c",
         "xalloc.h": "c",
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "stdio.h": "c"
     }
 }

@@ -1,17 +1,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <stdlib.h>
-
 #include <unistd.h>
-
-/*
- * El espacio libre de almacenamiento es mantenido como una 
- * lista de bloques libres, Cada bloque contiene un tamaño ,
- * un apuntador al siguiente bloque, y el espacio en sí, Los
- * bloques son mantenidos en orden ascendente de dirección de 
- * almacenamiento (ordenados por sus diercciones) el ultimo bloque
- * apunta al primero. 
-*/
 
 /* 
  * Definicion de la cabecera para huecos y bloques. 
@@ -50,10 +40,9 @@ static Header base;   /* empty list to get started */
 static Header *freep = NULL;  /* start of the free list */
 
 
-#define NALLOC 10 /* minima memoria que se puede solicitar al so*/
+#define NALLOC 20 /* minima memoria que se puede solicitar al so*/
 
 int eqHeader = (sizeof(Header) + sizeof(Align) - 1)/sizeof(Align); //cuantos Aligs equivale un header
-int eqAling =  (sizeof(Align) + sizeof(Header) - 1)/sizeof(Header);//cuantos header equivale un Aling
 
 
 static Header* morecore(size_t nu);
@@ -62,6 +51,7 @@ void xfree(void *ap);
 size_t getfreem(void); 
 void visualize(const char* msg);
 
+void* xrealloc(void* ptr, size_t size);
 size_t totalUnits = 0;
 
 int main(void){ 
@@ -81,19 +71,24 @@ int main(void){
     ptstring2 = (char*) xmalloc(25*char_size);
     visualize("solicitar 25 char");
     ptstring3 = (char*) xmalloc(16*char_size);
-    visualize("solicitar 16 char");
+    visualize("solicitar 16 char");    
     
-    //xfree(ptstring2);
-    //visualize("xfree(pstring2) de 25bytes");
     
-    xfree(ptstring1);
-    visualize("xfree(pstring1) de 25bytes");
+    //xfree(ptstring1);
+    //visualize("xfree(pstring1) de 25bytes");
     
+    xfree(ptstring2);
+    visualize("xfree(pstring2) de 25bytes");
+        
+    char* realocado = (char*) xrealloc(ptstring1,16);
+    printf("%s",realocado);
+    visualize("realloc pstring1 to 16 bytes");
     //xfree(ptlong1);
     //visualize("xfree(ptlong1) de 8 bytes"); 
 
-    xfree(ptstring3); 
-    visualize("cfree(pstring3) de 16 bytes");
+    //xfree(ptstring3); 
+    //visualize("cfree(pstring3) de 16 bytes");
+
     exit(0);     
 }
 
@@ -145,8 +140,7 @@ void *xmalloc (size_t nbytes)
 		if (currp->s.size >= nunits) {  /* big enough */
 			//if (currp->s.size == nunits || currp->s.size - nunits < 2)
 			if (currp->s.size == nunits || currp->s.size - nunits < 1 + eqHeader)  // <--- ACTIVIDAD 2 
-            	//lo hice tomando en cuenta que un header es eqHeader Aligns
-                prevp->s.next = currp->s.next;
+                 prevp->s.next = currp->s.next;
 			else {                  
                 /* adjust the size */
                 currp->s.size -= nunits;
@@ -295,37 +289,41 @@ void xfree(void *ptr)
 }
 
 
-void * disminuirBloque(void * ptr, size_t size){
-    Header* bp = (Header*) ptr - 1;
+Header * disminuirBloque(void * ptr, size_t size){
+    Header* bp = ((Header*) ptr) - 1;
     Header* prevp = bp ;
     Header* newb;
     //int nunits = (size + sizeof(Header)-1)/sizeof(Header) + 1;
     int nunits = (size + sizeof(Align) - 1)/sizeof(Align) + eqHeader; // <----ACTIVIDAD 1
 
     //se debe encontrar la nueva posicion de freep
-    while(prevp->s.next != bp)
+    while(prevp->s.next != bp->s.next)
         prevp = prevp->s.next;
     
     freep = prevp; 
     //ahora que se tiene la posicion correcta del freep, se libera el bloque
+    
     newb = bp+(bp->s.size-nunits);
     newb->s.size = nunits;  
     xfree(newb + 1);
+    
+    bp->s.size -= nunits;
     return freep->s.next; //return newb
 }
 
 /* aca estoy considerando para cuando las unidades se miden en alings*/
 void *xrealloc(void * ptr, size_t size)
 {
-    Header* bp = (Header*) ptr - 1; //pt al bloque que voy a modificar 
-    Header* rp; //pt al bloque que voy a devolver
+
+    Header* bp = ((Header*) ptr) - 1; //pt al bloque que voy a modificar 
+    Header* rp = NULL; //pt al bloque que voy a devolver
 
     //if(sizeof(Header) * (bp->s.size - 1) > size)
     if(sizeof(Align) * (bp->s.size - eqHeader) > size){
         //se verifica que haya adyacentes libres o que cumpla requisitos de tamaño
         //if((bp->s.next == (bp + bp->s.size)) || (bp->s.size - size >= 2))
-        if((bp->s.next == (bp + bp->s.size)) || (bp->s.size - size >= 1 + eqHeader)){
-            rp = (Header*)disminuirBloque(ptr,size);
+        if((bp->s.next == (bp + bp->s.size)) || (bp->s.size - size >= 1 + eqHeader)){            
+            rp = disminuirBloque(ptr,size);
         }else{
             return NULL; //no fue posible reallocar
         }
