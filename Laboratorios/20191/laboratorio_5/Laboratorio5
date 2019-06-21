@@ -1,0 +1,50 @@
+Bello Dios. 
+
+
+-copia 32768 veces en bloques de 1024 bytes, a una direccion .img
+	dd if=/dev/zero of=./FAT16D1.img bs=1024 count=32768
+
+-se crea el sistema de archivos en el archivo .img
+
+	mkfs.vfat FAT16D1.img
+
+
+................................................................
+
+comandos utiles 
+
+
+fsstat nombre.img 
+
+hexdump -C nombre.img
+
+
+
+montar con udisksctl lo monta como administrador y se puede 
+cambiar el contenido de la imagen 
+
+udisksctl loop-setup -f /home/alulab/Documentos/FAT16D1.img
+
+udisksctl unmount -b /dev/loop0
+
+................................................................
+
+direccion de sector de un cluster c 
+	(c-2) * #sectores por cluster + sector del cluster 2
+
+direccion de cluster de un sector s 
+	((s - sector del cluster 2) / #de sectores por cluster) + 2
+
+determinar si hay sectores no utilizados 
+(#total de sectores - direccion del sector del cluster2) / #sectores por cluster
+
+................................................................
+
+http://www.tavi.co.uk/phobos/fat.html#starting_cluster
+http://elm-chan.org/docs/fat_e.html
+
+https://www.nongnu.org/ext2-doc/ext2.html#s-inodes-count
+
+https://www.win.tue.nl/~aeb/linux/fs/fat/fat.html
+
+
